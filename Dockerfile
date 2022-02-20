@@ -4,11 +4,11 @@ LABEL maintainer="David Cumps <david@cumps.be>"
 
 RUN apt-get update && \
     apt-get install -y \
-        jq \
-        wget \
-        unzip \
-        libssl1.1 \
-        ca-certificates && \
+    jq \
+    wget \
+    unzip \
+    libssl1.1 \
+    ca-certificates && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -32,8 +32,8 @@ RUN \
     chmod +x bin/*
 
 VOLUME /chainflip/logs \
-       /chainflip/config \
-       /chainflip/chaindata
+    /chainflip/config \
+    /chainflip/chaindata
 
 FROM base AS engine
 ENTRYPOINT [ "" ]
@@ -69,10 +69,13 @@ FROM base AS subkey
 ENTRYPOINT [ "/chainflip/bin/subkey" ]
 
 FROM subkey AS keys
+ARG NODE_ENDPOINT
+ENV NODE_ENDPOINT="${NODE_ENDPOINT}"
 ENTRYPOINT [ "" ]
 CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --output-type json > /chainflip/config/keys ; \
     [ ! -f /chainflip/config/signing_key ] && echo -n $(jq -j -r .secretSeed /chainflip/config/keys | cut -c 3-) > /chainflip/config/signing_key && echo "Generated signing key." ; \
-    [ ! -f /chainflip/config/node_key ]    && /chainflip/bin/subkey generate-node-key --file /chainflip/config/node_key 2> /dev/null && echo "Generated node key."
+    [ ! -f /chainflip/config/node_key ]    && /chainflip/bin/subkey generate-node-key --file /chainflip/config/node_key 2> /dev/null && echo "Generated node key." ; \
+    cat /chainflip/config/chainflip.templ > /chainflip/config/chainflip.toml && echo "node_endpoint = \"${NODE_ENDPOINT}\"" >> /chainflip/config/chainflip.toml ;
 
 # Resulting filesystem:
 # /chainflip/bin/chainflip-engine
@@ -82,11 +85,12 @@ CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --o
 # /chainflip/config
 # /chainflip/chaindata
 
-# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.1.0 .
+
+# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.2.1 .
+# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.2.1 .
+# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.2.1 .
+# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.2.1 .
+# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.1 --build-arg NODE_ENDPOINT=REPLACE .
 
 # docker run --rm -it -v ${PWD}/config:/chainflip/config chainflip-keys
 # docker run --rm -it -v ${PWD}/config:/chainflip/config -v ${PWD}/chaindata:/chainflip/chaindata chainflip-node
