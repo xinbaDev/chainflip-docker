@@ -5,14 +5,14 @@ node_key_file = "/chainflip/config/node_key"
 ws_endpoint = "ws://chainflip-node:9944"
 signing_key_file = "/chainflip/config/signing_key"
 
-[eth]
-from_block = 9810000
-node_endpoint = "ws://chainflip-geth:8546"
-private_key_file = "/chainflip/config/ethereum_key"
-
 [health_check]
 hostname = "127.0.0.1"
 port = 5555
 
 [signing]
 db_file = "data.db"
+
+[eth]
+from_block = 9810000
+private_key_file = "/chainflip/config/ethereum_key"
+# node_endpoint = "ws://chainflip-geth:8546" use env variable instead

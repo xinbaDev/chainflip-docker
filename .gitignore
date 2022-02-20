@@ -1,5 +1,5 @@
 config/*
-!config/chainflip.toml
+!config/chainflip.templ
 !config/prometheus.yml
 !config/loki.yml
 !config/promtail.yml
