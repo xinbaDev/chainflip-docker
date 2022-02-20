@@ -4,20 +4,19 @@ LABEL maintainer="David Cumps <david@cumps.be>"
 
 RUN apt-get update && \
     apt-get install -y \
-        jq \
-        wget \
-        unzip \
-        libssl1.1 \
-        ca-certificates && \
+    jq \
+    wget \
+    unzip \
+    libssl1.1 \
+    ca-certificates && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
 ARG CHAINFLIP_VERSION
-ARG SUBKEY_VERSION
 
 ENV CHAINFLIP_TAR="chainflip.tar.gz"
 ENV CHAINFLIP_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${CHAINFLIP_VERSION}-soundcheck/${CHAINFLIP_TAR}" \
-    SUBKEY_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${SUBKEY_VERSION}-soundcheck/subkey"
+    SUBKEY_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v0.1.0-soundcheck/subkey"
 
 RUN \
     mkdir /chainflip && \
@@ -32,8 +31,8 @@ RUN \
     chmod +x bin/*
 
 VOLUME /chainflip/logs \
-       /chainflip/config \
-       /chainflip/chaindata
+    /chainflip/config \
+    /chainflip/chaindata
 
 FROM base AS engine
 ENTRYPOINT [ "" ]
@@ -83,11 +82,11 @@ CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --o
 # /chainflip/config
 # /chainflip/chaindata
 
-# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.1.0 .
-# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.1.0 .
+# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.2.2 .
+# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.2.2 .
+# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.2.2 .
+# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.2.2 .
+# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.2 .
 
 # docker run --rm -it -v ${PWD}/config:/chainflip/config chainflip-keys
 # docker run --rm -it -v ${PWD}/config:/chainflip/config -v ${PWD}/chaindata:/chainflip/chaindata chainflip-node

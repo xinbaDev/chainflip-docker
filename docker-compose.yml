@@ -11,32 +11,15 @@ x-logging:
 services:
   keys:
     container_name: chainflip-keys
-    image: ghcr.io/cumpsd/chainflip-keys:latest
+    image: chainflip-keys:latest
     logging: *default-logging
     volumes:
       - ./config:/chainflip/config
 
-  geth:
-    # http://127.0.0.1:6060/debug/metrics/prometheus
-    container_name: chainflip-geth
-    image: ethereum/client-go:alltools-stable
-    logging: *default-logging
-    restart: always
-    networks:
-      - chainflip
-    ports:
-      - 30303:30303 # ETH Network Port
-    expose:
-      - 30301 # Metrics Port
-      - 8546  # WS Port
-    volumes:
-      - ./geth-data:/root/.ethereum
-    command: geth --rinkeby --syncmode "snap" --ws --ws.addr 0.0.0.0 --ws.origins "*" --metrics --metrics.addr 0.0.0.0 --metrics.port 30301 --pprof --pprof.addr 0.0.0.0 --pprof.port 30302
-
   chainflip-node:
     # http://127.0.0.1:9615
     container_name: chainflip-node
-    image: ghcr.io/cumpsd/chainflip-node:latest
+    image: chainflip-node:latest
     logging: *default-logging
     restart: always
     networks:
@@ -52,11 +35,10 @@ services:
       - ./chaindata:/chainflip/chaindata
     depends_on:
       - keys
-      - geth
 
   chainflip-engine:
     container_name: chainflip-engine
-    image: ghcr.io/cumpsd/chainflip-engine:latest
+    image: chainflip-engine:latest
     logging: *default-logging
     restart: always
     networks:
@@ -66,7 +48,6 @@ services:
       - ./chaindata:/chainflip/chaindata:ro
     depends_on:
       - keys
-      - geth
       - chainflip-node
 
   prometheus:
@@ -84,7 +65,6 @@ services:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus-data:/prometheus
     depends_on:
-      - geth
       - chainflip-node
 
   loki:
