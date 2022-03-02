@@ -15,8 +15,9 @@ RUN apt-get update && \
 ARG CHAINFLIP_VERSION
 
 ENV CHAINFLIP_TAR="chainflip.tar.gz"
-ENV CHAINFLIP_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${CHAINFLIP_VERSION}-soundcheck/${CHAINFLIP_TAR}" \
+ENV CHAINFLIP_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${CHAINFLIP_VERSION}-soundcheck-soundcheck/${CHAINFLIP_TAR}" \
     SUBKEY_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v0.1.0-soundcheck/subkey"
+
 
 RUN \
     mkdir /chainflip && \
@@ -26,7 +27,7 @@ RUN \
     wget $CHAINFLIP_RELEASE_URL && \
     tar xvzf $CHAINFLIP_TAR && \
     rm $CHAINFLIP_TAR && \
-    mv chainflip-v$CHAINFLIP_VERSION bin && \
+    mv chainflip-v$CHAINFLIP_VERSION-soundcheck bin && \
     wget $SUBKEY_RELEASE_URL -P bin && \
     chmod +x bin/*
 
@@ -69,13 +70,13 @@ FROM base AS subkey
 ENTRYPOINT [ "/chainflip/bin/subkey" ]
 
 FROM subkey AS keys
-ARG NODE_ENDPOINT
-ENV NODE_ENDPOINT="${NODE_ENDPOINT}"
+ARG RIVET_KEY
+ENV RIVET_KEY="${RIVET_KEY}"
 ENTRYPOINT [ "" ]
 CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --output-type json > /chainflip/config/keys ; \
     [ ! -f /chainflip/config/signing_key ] && echo -n $(jq -j -r .secretSeed /chainflip/config/keys | cut -c 3-) > /chainflip/config/signing_key && echo "Generated signing key." ; \
     [ ! -f /chainflip/config/node_key ]    && /chainflip/bin/subkey generate-node-key --file /chainflip/config/node_key 2> /dev/null && echo "Generated node key." ; \
-    cat /chainflip/config/chainflip.templ > /chainflip/config/chainflip.toml && echo "node_endpoint = \"${NODE_ENDPOINT}\"" >> /chainflip/config/chainflip.toml ;
+    cat /chainflip/config/chainflip.templ > /chainflip/config/chainflip.toml && echo "wss_node_endpoint = \"wss://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"\nhttps_node_endpoint = \"https://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"" >> /chainflip/config/chainflip.toml ;
 
 # Resulting filesystem:
 # /chainflip/bin/chainflip-engine
@@ -89,7 +90,7 @@ CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --o
 # docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.2.2 .
 # docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.2.2 .
 # docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.2.2 .
-# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.2 --build-arg NODE_ENDPOINT=REPLACE .
+# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.2 --build-arg RIVET_KEY=REPLACE .
 
 # docker run --rm -it -v ${PWD}/config:/chainflip/config chainflip-keys
 # docker run --rm -it -v ${PWD}/config:/chainflip/config -v ${PWD}/chaindata:/chainflip/chaindata chainflip-node
