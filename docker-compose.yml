@@ -11,7 +11,7 @@ x-logging:
 services:
   keys:
     container_name: chainflip-keys
-    image: ghcr.io/cumpsd/chainflip-keys:latest
+    image: chainflip-keys:latest
     logging: *default-logging
     volumes:
       - ./config:/chainflip/config
@@ -36,7 +36,7 @@ services:
   chainflip-node:
     # http://127.0.0.1:9615
     container_name: chainflip-node
-    image: ghcr.io/cumpsd/chainflip-node:latest
+    image: chainflip-node:latest
     logging: *default-logging
     restart: always
     networks:
@@ -55,7 +55,7 @@ services:
 
   chainflip-engine:
     container_name: chainflip-engine
-    image: ghcr.io/cumpsd/chainflip-engine:latest
+    image: chainflip-engine:latest
     logging: *default-logging
     restart: always
     networks:
