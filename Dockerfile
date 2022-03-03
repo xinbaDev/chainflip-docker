@@ -76,7 +76,7 @@ ENTRYPOINT [ "" ]
 CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --output-type json > /chainflip/config/keys ; \
     [ ! -f /chainflip/config/signing_key ] && echo -n $(jq -j -r .secretSeed /chainflip/config/keys | cut -c 3-) > /chainflip/config/signing_key && echo "Generated signing key." ; \
     [ ! -f /chainflip/config/node_key ]    && /chainflip/bin/subkey generate-node-key --file /chainflip/config/node_key 2> /dev/null && echo "Generated node key." ; \
-    cat /chainflip/config/chainflip.templ > /chainflip/config/chainflip.toml && echo "wss_node_endpoint = \"wss://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"\nhttps_node_endpoint = \"https://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"" >> /chainflip/config/chainflip.toml ;
+    cat /chainflip/config/chainflip.templ > /chainflip/config/chainflip.toml && echo "ws_node_endpoint = \"wss://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"\nhttp_node_endpoint = \"https://${RIVET_KEY}.rinkeby.ws.rivet.cloud\"" >> /chainflip/config/chainflip.toml ;
 
 # Resulting filesystem:
 # /chainflip/bin/chainflip-engine
