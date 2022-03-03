@@ -4,11 +4,11 @@ LABEL maintainer="David Cumps <david@cumps.be>"
 
 RUN apt-get update && \
     apt-get install -y \
-        jq \
-        wget \
-        unzip \
-        libssl1.1 \
-        ca-certificates && \
+    jq \
+    wget \
+    unzip \
+    libssl1.1 \
+    ca-certificates && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -17,7 +17,7 @@ ARG SUBKEY_VERSION
 
 ENV CHAINFLIP_TAR="chainflip.tar.gz"
 ENV CHAINFLIP_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${CHAINFLIP_VERSION}-soundcheck/${CHAINFLIP_TAR}" \
-    SUBKEY_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v${SUBKEY_VERSION}-soundcheck/subkey"
+    SUBKEY_RELEASE_URL="https://github.com/chainflip-io/chainflip-bin/releases/download/v0.1.0-soundcheck/subkey"
 
 RUN \
     mkdir /chainflip && \
@@ -32,8 +32,8 @@ RUN \
     chmod +x bin/*
 
 VOLUME /chainflip/logs \
-       /chainflip/config \
-       /chainflip/chaindata
+    /chainflip/config \
+    /chainflip/chaindata
 
 FROM base AS engine
 ENTRYPOINT [ "" ]
