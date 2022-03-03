@@ -86,11 +86,11 @@ CMD [ ! -f /chainflip/config/keys ]        && /chainflip/bin/subkey generate --o
 # /chainflip/config
 # /chainflip/chaindata
 
-# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.2.2 .
-# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.2.2 .
-# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.2.2 .
-# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.2.2 .
-# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.2 --build-arg RIVET_KEY=REPLACE .
+# docker build -t chainflip-engine --target engine --build-arg CHAINFLIP_VERSION=0.2.3 .
+# docker build -t chainflip-cli --target cli --build-arg CHAINFLIP_VERSION=0.2.3 .
+# docker build -t chainflip-node --target node --build-arg CHAINFLIP_VERSION=0.2.3 .
+# docker build -t chainflip-subkey --target subkey --build-arg CHAINFLIP_VERSION=0.2.3 .
+# docker build -t chainflip-keys --target keys --build-arg CHAINFLIP_VERSION=0.2.3 --build-arg RIVET_KEY=REPLACE .
 
 # docker run --rm -it -v ${PWD}/config:/chainflip/config chainflip-keys
 # docker run --rm -it -v ${PWD}/config:/chainflip/config -v ${PWD}/chaindata:/chainflip/chaindata chainflip-node
